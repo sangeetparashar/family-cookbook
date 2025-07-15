@@ -9,8 +9,7 @@ A responsive web application for viewing and downloading PDF recipes.
 - 📄 In-browser PDF viewing
 - ⬇️ Download individual PDFs
 - 📑 Pagination for large collections
-- 🚀 Optimized for ~145 PDFs
-- 🌐 Works with GitHub Pages
+- 🚀 Optimized for ~100+ PDFs
 
 ## Setup
 

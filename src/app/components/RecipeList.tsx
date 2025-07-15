@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Recipe } from '@/types/recipe';
 import RecipeAccordion from './RecipeAccordion';
+import { Utensils, BookOpen } from 'lucide-react';
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -10,135 +11,82 @@ interface RecipeListProps {
 
 export default function RecipeList({ recipes }: RecipeListProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const recipesPerPage = 20;
+  const [openRecipeId, setOpenRecipeId] = useState<string | null>(null);
+
+  const handleToggleRecipe = (recipeId: string) => {
+    setOpenRecipeId(openRecipeId === recipeId ? null : recipeId);
+  };
 
   const filteredRecipes = useMemo(() => {
-    return recipes.filter(recipe =>
+    return recipes.filter(recipe => 
       recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [recipes, searchTerm]);
 
-  const totalPages = Math.ceil(filteredRecipes.length / recipesPerPage);
-  const startIndex = (currentPage - 1) * recipesPerPage;
-  const endIndex = startIndex + recipesPerPage;
-  const currentRecipes = filteredRecipes.slice(startIndex, endIndex);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <div>
-      {/* Search Bar */}
-      <div className="mb-6">
-        <div className="max-w-md mx-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search recipes..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              aria-label="Search recipes"
-            />
-            <svg
-              className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    <div className="min-h-screen bg-gray-100 font-sans">
+      {/* Header */}
+      <header className="bg-white shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center text-2xl sm:text-3xl font-bold text-indigo-700">
+              <Utensils size={36} className="mr-3 text-indigo-500 flex-shrink-0" />
+              Our Family Cookbook
+            </div>
+            <div className="w-full sm:w-auto max-w-xs sm:max-w-sm">
+              <input 
+                type="text"
+                placeholder="Search recipes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm"
               />
-            </svg>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Results count */}
-      <div className="mb-4 text-center text-gray-600">
-        {filteredRecipes.length === 0 ? (
-          <p>No recipes found matching &quot;{searchTerm}&quot;</p>
-        ) : (
-          <p>
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredRecipes.length)} of {filteredRecipes.length} recipes
-          </p>
-        )}
-      </div>
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        {/* Results count */}
+        <div className="mb-6 text-center text-gray-600">
+          {filteredRecipes.length === 0 ? (
+            <p>No recipes found matching your criteria.</p>
+          ) : (
+            <p>
+              Showing {filteredRecipes.length} of {recipes.length} recipes
+            </p>
+          )}
+        </div>
 
-      {/* Recipe List */}
-      <div className="max-w-4xl mx-auto mb-8">
-        {currentRecipes.map((recipe) => (
-          <RecipeAccordion key={recipe.id} recipe={recipe} />
-        ))}
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <nav className="flex justify-center items-center gap-2 mb-8" aria-label="Pagination">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-blue-600 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
-            aria-label="Previous page"
-          >
-            Previous
-          </button>
-          
-          <div className="flex gap-1">
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNumber = index + 1;
-              if (
-                pageNumber === 1 ||
-                pageNumber === totalPages ||
-                Math.abs(pageNumber - currentPage) <= 1
-              ) {
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => goToPage(pageNumber)}
-                    className={`px-3 py-1 rounded-md transition-colors ${
-                      currentPage === pageNumber
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                    aria-label={`Go to page ${pageNumber}`}
-                    aria-current={currentPage === pageNumber ? 'page' : undefined}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              } else if (
-                pageNumber === currentPage - 2 ||
-                pageNumber === currentPage + 2
-              ) {
-                return <span key={pageNumber} className="px-2" aria-hidden="true">...</span>;
-              }
-              return null;
-            })}
+        {/* Recipe Grid */}
+        {filteredRecipes.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredRecipes.map((recipe) => (
+              <RecipeAccordion 
+                key={recipe.id} 
+                recipe={recipe}
+                isOpen={openRecipeId === recipe.id}
+                onToggle={() => handleToggleRecipe(recipe.id)}
+              />
+            ))}
           </div>
-          
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-blue-600 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
-            aria-label="Next page"
-          >
-            Next
-          </button>
-        </nav>
-      )}
+        ) : (
+          <div className="text-center py-12 bg-white rounded-xl shadow-md p-6">
+            <BookOpen size={48} className="mx-auto text-gray-400 mb-4" />
+            <p className="text-xl text-gray-600">No recipes found matching your criteria.</p>
+            <p className="text-sm text-gray-500">Try adjusting your search term.</p>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+          <p className="text-sm text-gray-500">
+            &copy; {new Date().getFullYear()} The Family. All recipes cherished.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

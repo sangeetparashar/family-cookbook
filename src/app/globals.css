@@ -35,3 +35,8 @@
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* Smooth transition for accordion */
+.transition-max-height {
+  transition: max-height 0.7s ease-in-out;
+}
