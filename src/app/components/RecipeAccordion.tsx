@@ -19,7 +19,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
     try {
       const encodedUrl = url.replace(/ /g, '%20');
       const path = `https://github.com/sangeetparashar/family-cookbook/tree/main/public${encodedUrl}`;
-      return path.substring(path.lastIndexOf('/') + 1) || `recipe-${recipe.id}.pdf`;
+      return path;
     } catch (e) {
       console.error(e);
       return `recipe-${recipe.id}.pdf`;
