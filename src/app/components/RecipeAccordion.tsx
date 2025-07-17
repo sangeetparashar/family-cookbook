@@ -18,7 +18,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
   const getFilenameFromUrl = (url: string) => {
     try {
       const encodedUrl = url.replace(/ /g, '%20');
-      const path = `https://github.com/sangeetparashar/family-cookbook/tree/main/public${encodedUrl}`;
+      const path = `https://raw.githubusercontent.com/sangeetparashar/family-cookbook/main/public${encodedUrl}`;
       return path;
     } catch (e) {
       console.error(e);
