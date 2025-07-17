@@ -1,37 +1,223 @@
-import fs from 'fs';
-import path from 'path';
-import { Recipe } from '@/types/recipe';
+import fs from "fs";
+import path from "path";
+import { Recipe } from "@/types/recipe";
 
 export async function getRecipes(): Promise<Recipe[]> {
-  const recipesDirectory = path.join(process.cwd(), 'public', 'recipes');
-  
+  const recipesDirectory = path.join(process.cwd(), "public", "recipes");
+
   try {
     const files = await fs.promises.readdir(recipesDirectory);
-    const pdfFiles = files.filter(file => file.endsWith('.pdf'));
-    
+    const pdfFiles = files.filter((file) => file.endsWith(".pdf"));
+
     const recipes = pdfFiles.map((filename, index) => ({
       id: `recipe-${index + 1}`,
       name: filename
-        .replace('.pdf', '')
-        .replace(/-/g, ' ')
-        .replace(/_/g, ' ')
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' '),
+        .replace(".pdf", "")
+        .replace(/_/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
       filename: filename,
-      path: `/recipes/${filename}`
+      path: `/recipes/${filename}`,
     }));
 
     // Sort recipes alphabetically
     recipes.sort((a, b) => a.name.localeCompare(b.name));
-    
-    return recipes.map(recipe => ({
+
+    return recipes.map((recipe) => ({
       ...recipe,
-      description: '',  // Add missing required fields
-      category: ''      // Add missing required fields
+      description: "", // Add missing required fields
+      category: getRecipeCategories[recipe.name] || ["Uncategorized"], // Use full category array
     }));
   } catch (error) {
-    console.error('Error reading recipes directory:', error);
+    console.error("Error reading recipes directory:", error);
     return [];
   }
 }
+
+export const getRecipeCategories: { [key: string]: string[] } = {
+  "Pastry Dough for 2-Crust Pie": ["Dessert"],
+  "7-Up Cake": ["Dessert"],
+  "Apple Cake": ["Dessert"],
+  "Apple Pie 1": ["Dessert"],
+  "Apple Pie 2": ["Dessert"],
+  "Artichoke & Spinach Dip": ["Western", "Salad&Sides"],
+  "Banana Bread": ["Dessert"],
+  "Barbeque Chicken": ["Western"],
+  "Barbeque Ribs": ["Western"],
+  "Beef Bourguignonne": ["Western"],
+  "Beef & Broccoli": ["Western"],
+  "Beef Fajitas": ["Mexican"],
+  "Beer Batter-fried Shrimp": ["Western"],
+  "Better Than Sex Cake": ["Dessert"],
+  "Broiled Sirloin Steak": ["Western"],
+  "Broiled Tomatoes": ["Western", "Salad&Sides"],
+  "Brownies": ["Dessert"],
+  "Buffalo Hot Wings": ["Western"],
+  "Buttercream Recipe": ["Dessert"],
+  "Buttermilk Biscuits": ["Dessert"],
+  "Caldo Soup, Rice": ["Mexican"],
+  "Carrot Cake": ["Dessert"],
+  "Cheese Ball (Pineapple, Onion)": ["Western"],
+  "Cheesecake Bars": ["Dessert"],
+  "Chicago Mash with Onion and Bacon": ["Western"],
+  "Guam Chicken": ["Mexican"],
+  "Chicken-Fried Steak with Milk Gravy": ["Western"],
+  "Chicken Tostadas": ["Mexican"],
+  "Sauteed Chicken with Sauce": ["Western"],
+  "Salsa, Avocado, Sour cream": ["Mexican"],
+  "Chocolate Cups with Whipped Cream": ["Dessert"],
+  "Cinnamon Crisp": ["Dessert"],
+  "조개스프 (Clam Chowder)": ["Western", "Salad&Sides"],
+  "오렌지소스 샐러드 ": ["Western", "Salad&Sides"],
+  "코코넛 흰살 생선튀김": ["Western"],
+  "Coconut Cookies": ["Dessert"],
+  "Cream Puffs": ["Dessert"],
+  "Creamy Cheesecake": ["Dessert"],
+  "Creamy Chocolate Pie": ["Dessert"],
+  "Creamy Cucumbers": ["Western", "Salad&Sides"],
+  "Crumb Top Coffee Cake": ["Dessert"],
+  "Crumb-Coated Dijon Chicken": ["Western"],
+  "Homemade Egg Pasta": ["Western"],
+  "Chicken Enchiladas": ["Mexican"],
+  "Salsa Cruda, Rice": ["Mexican", "Salad&Sides"],
+  "Fired Chicken": ["Western"],
+  "Fried Green Tomatoes": ["Western", "Salad&Sides"],
+  "Frosted Lemon Cookies": ["Dessert"],
+  "Fudge Brownies": ["Dessert"],
+  "Garlic and Rosemary Green Beans": ["Western", "Salad&Sides"],
+  Gingersnaps: ["Dessert"],
+  "Hawaiian Dip": ["Western", "Salad&Sides"],
+  "Homemade Muffins": ["Dessert"],
+  "Honey Baked Chicken": ["Western"],
+  "Hungarian Goulash": ["Western"],
+  "Lasagna + Garlic Bread": ["Western"],
+  "Lemon Chicken Pasta Toss": ["Western"],
+  "Lemon Cookies": ["Dessert"],
+  "Lemon Pudding Cake": ["Dessert"],
+  "Lentil Soup": ["Western", "Salad&Sides"],
+  "Linguine with Prosciutto & Olives": ["Western"],
+  "Macaroni-Cheese Puff": ["Western"],
+  "Macaroni Salad": ["Western", "Salad&Sides"],
+  "Rice Pudding": ["Western"],
+  "Mexican Rice Pudding": ["Mexican"],
+  "Milk Chocolate Cookies": ["Dessert"],
+  "Mini Pecan": ["Dessert"],
+  "Mom's Pot Roast": ["Western"],
+  "Stir-fried Napa Cabbage Salad": ["Western", "Salad&Sides"],
+  "Oatmeal Cookies": ["Dessert"],
+  "Orange Cake": ["Dessert"],
+  Pancakes: ["Western"],
+  "Peanut Butter Blossoms": ["Dessert"],
+  "Peanut Butter Cookies": ["Dessert"],
+  "Creamy Pesto": ["Western"],
+  "Philly Pound Cake": ["Dessert"],
+  "Pineppl Upside-Down Cake": ["Dessert"],
+  Pizza: ["Western"],
+  "Pork Adobo": ["Western"],
+  "Potato Salad": ["Western", "Salad&Sides"],
+  "Pound Cake": ["Dessert"],
+  "Pronto Pasta Bake": ["Western"],
+  "Pumpkin Roll": ["Dessert"],
+  "Quiche lorraine": ["Western"],
+  "Raspberry Muffins": ["Dessert"],
+  "Rice Krispies": ["Dessert"],
+  "Rice Pilaf": ["Mexican", "Salad&Sides"],
+  "Rum Cake": ["Dessert"],
+  "Salisbury Steak": ["Western"],
+  "Scalloped Potatoes": ["Western", "Salad&Sides"],
+  "Shrimp-Ball Soup": ["Western"],
+  "Shrimp and Spinach Alfredo": ["Western"],
+  Spaghetti: ["Western"],
+  "Easy Barbecued Spareribs": ["Western"],
+  "Strawberry Shortcake": ["Dessert"],
+  "Sugar Cookies": ["Dessert"],
+  Sukiyaki: ["Asian"],
+  "Sweet & Sour Chicken": ["Western"],
+  "Sweet & Sour Meatballs": ["Western"],
+  "Taco Salad": ["Mexican", "Salad&Sides"],
+  "Tofu Chorizo ": ["Mexican"],
+  "Flour Tortillas": ["Mexican", "Salad&Sides"],
+  "Vanilla Pudding": ["Dessert"],
+  "Yellow Cake, White Cake": ["Dessert"],
+  "Zucchini Bread": ["Dessert"],
+  "간장소스 샐러드": ["Salad&Sides"],
+  단호박완자조림: ["Asian"],
+  "일본식 카레": ["Asian"],
+  감자스프: ["Western", "Salad&Sides"],
+  "Thousand Island Dressing": ["Western", "Salad&Sides"],
+  "코코넛 쿠키": ["Dessert"],
+  치킨도리아: ["Asian", "Salad&Sides"],
+  구름떡: ["Asian"],
+  꿀편: ["Asian"],
+  녹차떡케이크: ["Asian"],
+  "녹차 쉐이크": ["Asian"],
+  "단호박 컵케이크": ["Dessert"],
+  단호박스프: ["Salad&Sides"],
+  연어샐러드: ["Western", "Salad&Sides"],
+  안심스테이크: ["Western", "Salad&Sides"],
+  "챠쇼스의 닭다리구이": ["Asian"],
+  "갑오징어(새우)튀김": ["Asian"],
+  "마늘콩소스의 연두부": ["Asian"],
+  닭죽: ["Asian"],
+  도토리묵무침: ["Asian"],
+  가지전: ["Asian"],
+  애호박죽: ["Asian"],
+  두부과자: ["Asian"],
+  라면그라탕: ["Asian"],
+  마라황과: ["Asian"],
+  닭안심마늘콩소스: ["Asian"],
+  "계살소스 두부구이": ["Asian"],
+  파인애플볶음밥: ["Asian"],
+  멕시칸밥: ["Mexican"],
+  "모카빵 소보로": ["Asian"],
+  물호박덕: ["Asian"],
+  밤양갱: ["Asian"],
+  "밥 요리": ["Asian"],
+  "버터롤 모닝빵": ["Asian"],
+  "복숭아요쿠르트 쉐이크": ["Dessert", "Asian"],
+  "생크림 샐러드": ["Salad&Sides"],
+  생태찌개: ["Asian"],
+  샤브샤브: ["Asian"],
+  달걀찜: ["Asian"],
+  메밀국수: ["Asian"],
+  수삼꿀소스샐러드: ["Asian", "Salad&Sides"],
+  고등어강정: ["Asian"],
+  오삼불고기: ["Asian"],
+  "Fruits Bubble Tea": ["Asian"],
+  식빵: ["Asian"],
+  신당동떡볶이: ["Asian"],
+  애호박전: ["Asian"],
+  "야채 모짜렐라치즈 오븐 구이": ["Western"],
+  완두스프: ["Western", "Salad&Sides"],
+  "닭가슴살구이와 홀스래디쉬소스": ["Western"],
+  녹차무스: ["Western"],
+  약식: ["Asian"],
+  양갱이: ["Asian"],
+  "엄마표 호박죽": ["Asian"],
+  "콘 버터 철판구이": ["Asian"],
+  핫도그: ["Western"],
+  호두파운드: ["Dessert"],
+  LA찹쌀케이크: ["Asian"],
+  치즈샌드: ["Dessert"],
+  계란찜: ["Asian"],
+  "일본식 야채불고기": ["Asian"],
+  "일본식 무 장아찌": ["Asian"],
+  "찌라시 스시": ["Asian"],
+  참치구이샐러드: ["Asian", "Salad&Sides"],
+  닭고기야채조림: ["Asian"],
+  "찌라시 스시 2": ["Asian"],
+  미소시루: ["Asian"],
+  케이준치킨샐러드: ["Western", "Salad&Sides"],
+  화이타: ["Mexican"],
+  "콩찰편. 송편": ["Asian"],
+  햄버거: ["Western"],
+  "호박고지 모듬떡": ["Asian"],
+  홍합조림: ["Asian"],
+  북어고추장양념구이: ["Asian"],
+  떡갈비: ["Asian"],
+  "흑임자 떡 케이크": ["Asian"],
+  흰살생선매실소스: ["Asian"],
+  피망고추잡채: ["Asian"],
+  매생이굴국: ["Asian"],
+};
