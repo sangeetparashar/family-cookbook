@@ -83,7 +83,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
             <div className="relative w-full" style={{paddingBottom: "141.42%" /* For A4-like aspect ratio (sqrt(2)) */}}> 
               {recipe.path ? (
                 <iframe
-                  src={recipe.path}
+                  src={getFilenameFromUrl(recipe.path)}
                   title={recipe.name}
                   className="absolute top-0 left-0 w-full h-full"
                   allow="fullscreen"
