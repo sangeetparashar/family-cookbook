@@ -27,7 +27,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
   // };
 
   return (
-    <div className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col ${isOpen ? 'flex-none' : 'flex-1 min-h-0 max-h-[5vh]'}`}>
+    <div className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col ${isOpen ? 'flex-none' : 'flex-1 min-h-0 max-h-[7vh]'}`}>
       <button
         onClick={onToggle}
         aria-expanded={isOpen}
