@@ -15,16 +15,16 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Extract filename for download
-  const getFilenameFromUrl = (url: string) => {
-    try {
-      const encodedUrl = url.replace(/ /g, '%20');
-      const path = `https://raw.githubusercontent.com/sangeetparashar/family-cookbook/main/public${encodedUrl}`;
-      return path;
-    } catch (e) {
-      console.error(e);
-      return `recipe-${recipe.id}.pdf`;
-    }
-  };
+  // const getFilenameFromUrl = (url: string) => {
+  //   try {
+  //     const encodedUrl = url.replace(/ /g, '%20');
+  //     const path = `https://raw.githubusercontent.com/sangeetparashar/family-cookbook/main/public${encodedUrl}`;
+  //     return path;
+  //   } catch (e) {
+  //     console.error(e);
+  //     return `recipe-${recipe.id}.pdf`;
+  //   }
+  // };
 
   return (
     <div className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col ${isOpen ? 'flex-none' : 'flex-1 min-h-0 max-h-[5vh]'}`}>
