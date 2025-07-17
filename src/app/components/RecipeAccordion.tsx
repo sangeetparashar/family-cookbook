@@ -67,7 +67,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
             <div className="flex-shrink-0 ml-4">
               <a
                 href={recipe.path}
-                download={getFilenameFromUrl(recipe.path)}
+                download={recipe.path}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 border border-green-500 rounded-lg shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 hover:shadow-md"
@@ -83,7 +83,7 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
             <div className="relative w-full" style={{paddingBottom: "141.42%" /* For A4-like aspect ratio (sqrt(2)) */}}> 
               {recipe.path ? (
                 <iframe
-                  src={getFilenameFromUrl(recipe.path)}
+                  src={recipe.path}
                   title={recipe.name}
                   className="absolute top-0 left-0 w-full h-full"
                   allow="fullscreen"
