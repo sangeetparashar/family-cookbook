@@ -1,5 +1,3 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
-
-/* Custom styles for PDF viewer */
+@tailwind utilities; 
