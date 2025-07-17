@@ -25,7 +25,11 @@ export async function getRecipes(): Promise<Recipe[]> {
     // Sort recipes alphabetically
     recipes.sort((a, b) => a.name.localeCompare(b.name));
     
-    return recipes;
+    return recipes.map(recipe => ({
+      ...recipe,
+      description: '',  // Add missing required fields
+      category: ''      // Add missing required fields
+    }));
   } catch (error) {
     console.error('Error reading recipes directory:', error);
     return [];
