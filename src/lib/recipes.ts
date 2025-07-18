@@ -180,10 +180,7 @@ export async function getRecipes(): Promise<Recipe[]> {
     id: `recipe-${index + 1}`,
     name: filename
       .replace(".pdf", "")
-      .replace(/_/g, " ")
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" "),
+      .replace(/_/g, " "),
     filename: filename,
     path: `https://raw.githubusercontent.com/sangeetparashar/family-cookbook/main/public/recipes/${encodeURIComponent(filename)}`,
   }));
