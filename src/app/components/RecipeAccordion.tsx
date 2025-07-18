@@ -120,14 +120,14 @@ function ImageModal({ isOpen, onClose, imageData, currentIndex, onIndexChange, r
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all duration-200"
+          className="absolute top-4 right-4 z-10 bg-gray-800 text-white p-3 rounded-full hover:bg-gray-900 transition-all duration-200 shadow-lg border-2 border-white"
           aria-label="Close modal"
         >
-          <X size={24} />
+          <X size={28} />
         </button>
 
         {/* Main Image */}
-        <div className="relative max-w-full max-h-full">
+        <div className="relative max-w-full max-h-full bg-white rounded-lg shadow-lg">
           <Image
             src={imageData.imagePaths[currentIndex]}
             alt={`${recipeName} - Page ${currentIndex + 1}`}
