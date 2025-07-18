@@ -53,41 +53,45 @@ async function generateImagesMap() {
       }
     }
 
-    // Generate the TypeScript file content
-    const tsContent = `// Auto-generated file - do not edit manually
-export interface RecipeImageData {
-  recipeName: string;
-  totalImages: number;
-  images: string[];
-  imagePaths: string[];
-}
+    // Write the JSON file
+    const jsonOutputPath = path.join(__dirname, 'src', 'lib', 'images-map.json');
+    await fs.promises.writeFile(jsonOutputPath, JSON.stringify(imagesMap, null, 2) + '\r\n');
 
-// Static images map - auto-generated from recipe folders
-export const imagesMap: Record<string, RecipeImageData> = ${JSON.stringify(imagesMap, null, 2)};
-
-// Function to get image data for a specific recipe
-export function getRecipeImages(recipeName: string): RecipeImageData | null {
-  return imagesMap[recipeName] || null;
-}
-
-// Function to get all recipe names that have images
-export function getRecipeNamesWithImages(): string[] {
-  return Object.keys(imagesMap);
-}
-
-// Function to check if a recipe has images
-export function hasRecipeImages(recipeName: string): boolean {
-  return recipeName in imagesMap;
-}
+    // Generate a much smaller TypeScript file that imports the JSON
+    const tsContent = `// Auto-generated file - do not edit manually\r
+import imagesMapData from './images-map.json';\r
+\r
+export interface RecipeImageData {\r
+  recipeName: string;\r
+  totalImages: number;\r
+  images: string[];\r
+  imagePaths: string[];\r
+}\r
+\r
+// Function to get image data for a specific recipe\r
+export function getRecipeImages(recipeName: string): RecipeImageData | null {\r
+  return (imagesMapData as Record<string, RecipeImageData>)[recipeName] || null;\r
+}\r
+\r
+// Function to get all recipe names that have images\r
+export function getRecipeNamesWithImages(): string[] {\r
+  return Object.keys(imagesMapData);\r
+}\r
+\r
+// Function to check if a recipe has images\r
+export function hasRecipeImages(recipeName: string): boolean {\r
+  return recipeName in imagesMapData;\r
+}\r
 `;
 
     // Write the TypeScript file
-    const outputPath = path.join(__dirname, 'src', 'lib', 'recipe-images.ts');
-    await fs.promises.writeFile(outputPath, tsContent);
+    const tsOutputPath = path.join(__dirname, 'src', 'lib', 'recipe-images.ts');
+    await fs.promises.writeFile(tsOutputPath, tsContent);
     
     console.log(`\nImages map generated successfully!`);
     console.log(`Total recipes with images: ${Object.keys(imagesMap).length}`);
-    console.log(`Output file: ${outputPath}`);
+    console.log(`JSON file: ${jsonOutputPath}`);
+    console.log(`TypeScript file: ${tsOutputPath}`);
 
     return imagesMap;
   } catch (error) {

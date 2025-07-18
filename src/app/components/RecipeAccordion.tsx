@@ -11,17 +11,45 @@ interface RecipeAccordionProps {
   onToggle: () => void;
 }
 
-interface ImageData {
+interface RecipeImageData {
   recipeName: string;
   totalImages: number;
   images: string[];
   imagePaths: string[];
 }
 
+// Global cache for images data
+let imagesDataCache: Record<string, RecipeImageData> | null = null;
+let imagesDataPromise: Promise<Record<string, RecipeImageData>> | null = null;
+
+async function fetchImagesData(): Promise<Record<string, RecipeImageData>> {
+  if (imagesDataCache) {
+    return imagesDataCache;
+  }
+  
+  if (imagesDataPromise) {
+    return imagesDataPromise;
+  }
+
+  imagesDataPromise = fetch('/api/recipes/images')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch images data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      imagesDataCache = data;
+      return data;
+    });
+
+  return imagesDataPromise;
+}
+
 export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAccordionProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imageData, setImageData] = useState<ImageData | null>(null);
+  const [imageData, setImageData] = useState<RecipeImageData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,19 +61,15 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
       
       const fetchImages = async () => {
         try {
-          const response = await fetch(`/api/recipes/${encodeURIComponent(recipe.name)}/images`);
+          const allImagesData = await fetchImagesData();
+          const recipeImages = allImagesData[recipe.name];
           
-          if (!response.ok) {
-            if (response.status === 404) {
-              setError('No images found for this recipe');
-            } else {
-              setError('Failed to load recipe images');
-            }
+          if (!recipeImages) {
+            setError('No images found for this recipe');
             return;
           }
           
-          const data: ImageData = await response.json();
-          setImageData(data);
+          setImageData(recipeImages);
           setCurrentImageIndex(0);
         } catch (err) {
           console.error('Error fetching images:', err);
