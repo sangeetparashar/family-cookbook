@@ -4,18 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node generate-images-map.mjs && next build",
     "start": "next start",
     "lint": "next lint",
-    "convert": "node public/convert-pdfs.js"
+    "generate-images": "node generate-images-map.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.525.0",
     "next": "15.3.5",
-    "pdf-poppler": "^0.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-pdf": "^10.0.1",
     "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
@@ -23,7 +21,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/react-pdf": "^6.2.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
