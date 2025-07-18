@@ -1,38 +1,201 @@
-import fs from "fs";
-import path from "path";
 import { Recipe } from "@/types/recipe";
 
+// Static list of recipes with GitHub raw URLs
+const recipeList = [
+  "7-Up Cake.pdf",
+  "Apple Cake.pdf",
+  "Apple Pie 1.pdf",
+  "Apple Pie 2.pdf",
+  "Artichoke & Spinach Dip.pdf",
+  "Banana Bread.pdf",
+  "Barbeque Chicken.pdf",
+  "Barbeque Ribs.pdf",
+  "Beef & Broccoli.pdf",
+  "Beef Bourguignonne.pdf",
+  "Beef Fajitas.pdf",
+  "Beer Batter-fried Shrimp.pdf",
+  "Better Than Sex Cake.pdf",
+  "Broiled Sirloin Steak.pdf",
+  "Broiled Tomatoes.pdf",
+  "Brownies.pdf",
+  "Buffalo Hot Wings.pdf",
+  "Buttercream Recipe.pdf",
+  "Buttermilk Biscuits.pdf",
+  "Caldo Soup, Rice.pdf",
+  "Carrot Cake.pdf",
+  "Cheese Ball (Pineapple, Onion).pdf",
+  "Cheesecake Bars.pdf",
+  "Chicago Mash with Onion and Bacon.pdf",
+  "Chicken Enchiladas.pdf",
+  "Chicken Tostadas.pdf",
+  "Chicken-Fried Steak with Milk Gravy.pdf",
+  "Chocolate Cups with Whipped Cream.pdf",
+  "Cinnamon Crisp.pdf",
+  "Coconut Cookies.pdf",
+  "Cream Puffs.pdf",
+  "Creamy Cheesecake.pdf",
+  "Creamy Chocolate Pie.pdf",
+  "Creamy Cucumbers.pdf",
+  "Creamy Pesto.pdf",
+  "Crumb Top Coffee Cake.pdf",
+  "Crumb-Coated Dijon Chicken.pdf",
+  "Easy Barbecued Spareribs.pdf",
+  "Flour Tortillas.pdf",
+  "Fried Chicken.pdf",
+  "Fried Green Tomatoes.pdf",
+  "Frosted Lemon Cookies.pdf",
+  "Fruits Bubble Tea.pdf",
+  "Fudge Brownies.pdf",
+  "Garlic and Rosemary Green Beans.pdf",
+  "Gingersnaps.pdf",
+  "Guam Chicken.pdf",
+  "Hawaiian Dip.pdf",
+  "Homemade Egg Pasta.pdf",
+  "Homemade Muffins.pdf",
+  "Honey Baked Chicken.pdf",
+  "Hungarian Goulash.pdf",
+  "Lasagna + Garlic Bread.pdf",
+  "LA찹쌀케이크.pdf",
+  "Lemon Chicken Pasta Toss.pdf",
+  "Lemon Cookies.pdf",
+  "Lemon Pudding Cake.pdf",
+  "Lentil Soup.pdf",
+  "Linguine with Prosciutto & Olives.pdf",
+  "Macaroni Salad.pdf",
+  "Macaroni-Cheese Puff.pdf",
+  "Mexican Rice Pudding.pdf",
+  "Milk Chocolate Cookies.pdf",
+  "Mini Pecan.pdf",
+  "Mom's Pot Roast.pdf",
+  "Oatmeal Cookies.pdf",
+  "Orange Cake.pdf",
+  "Pancakes.pdf",
+  "Pastry Dough for 2-Crust Pie.pdf",
+  "Peanut Butter Blossoms.pdf",
+  "Peanut Butter Cookies.pdf",
+  "Philly Pound Cake.pdf",
+  "Pineppl Upside-Down Cake.pdf",
+  "Pizza.pdf",
+  "Pork Adobo.pdf",
+  "Potato Salad.pdf",
+  "Pound Cake.pdf",
+  "Shrimp-Ball Soup.pdf",
+  "Spaghetti.pdf",
+  "Stir-fried Napa Cabbage Salad.pdf",
+  "Strawberry Shortcake.pdf",
+  "Sugar Cookies.pdf",
+  "Sukiyaki.pdf",
+  "Sweet & Sour Chicken.pdf",
+  "Sweet & Sour Meatballs.pdf",
+  "sweet sour chicken.pdf",
+  "Taco Salad.pdf",
+  "Thousand Island Dressing.pdf",
+  "Tofu Chorizo.pdf",
+  "Vanilla Pudding.pdf",
+  "Yellow Cake, White Cake.pdf",
+  "Zucchini Bread.pdf",
+  "가지전.pdf",
+  "간장소스 샐러드.pdf",
+  "감자스프.pdf",
+  "갑오징어(새우)튀김.pdf",
+  "계란찜.pdf",
+  "계살소스 두부구이.pdf",
+  "고등어강정.pdf",
+  "구름떡.pdf",
+  "꿀편.pdf",
+  "녹차 쉐이크.pdf",
+  "녹차떡케이크.pdf",
+  "녹차무스.pdf",
+  "단호박 컵케이크.pdf",
+  "단호박스프.pdf",
+  "단호박완자조림.pdf",
+  "달걀찜.pdf",
+  "닭가슴살구이와 홀스래디쉬소스.pdf",
+  "닭고기야채조림.pdf",
+  "닭안심마늘콩소스.pdf",
+  "닭죽.pdf",
+  "도토리묵무침.pdf",
+  "두부과자.pdf",
+  "떡갈비.pdf",
+  "라면그라탕.pdf",
+  "마늘콩소스의 연두부.pdf",
+  "마라황과.pdf",
+  "매생이굴국.pdf",
+  "메밀국수.pdf",
+  "멕시칸밥.pdf",
+  "모카빵 소보로.pdf",
+  "물호박떡.pdf",
+  "미소시루.pdf",
+  "밤양갱 만들기.pdf",
+  "밥 요리.pdf",
+  "버터롤 모닝빵.pdf",
+  "복숭아요쿠르트 쉐이크.pdf",
+  "북어고추장.pdf",
+  "생크림샐러드.pdf",
+  "생태찌개.pdf",
+  "샤브샤브.pdf",
+  "수삼꿀소스샐러드.pdf",
+  "식빵.pdf",
+  "신당동떡볶이.pdf",
+  "안심스테이크.pdf",
+  "애호박전.pdf",
+  "애호박죽.pdf",
+  "야채 모짜렐라치즈 오븐 구이.pdf",
+  "약식.pdf",
+  "양갱이.pdf",
+  "엄마표 호박죽.pdf",
+  "연어샐러드.pdf",
+  "오렌지소스 샐러드.pdf",
+  "오삼불고기.pdf",
+  "완두수프.pdf",
+  "일본식 무 장아찌.pdf",
+  "일본식 야채불고기.pdf",
+  "일본식 카레.pdf",
+  "조개스프 (Clam Chowder).pdf",
+  "찌라시 스시.pdf",
+  "찌라시 스시 2.pdf",
+  "참치구이샐러드.pdf",
+  "챠쇼스의 닭다리구이.pdf",
+  "치즈샌드.pdf",
+  "치킨도리아.pdf",
+  "케이준치킨샐러드.pdf",
+  "코코넛 흰살 생선튀김.pdf",
+  "코코넛쿠키.pdf",
+  "콘 버터 철판구이.pdf",
+  "콩찰편, 송편.pdf",
+  "파인애플볶음밥.pdf",
+  "피망고추잡채.pdf",
+  "핫도그.pdf",
+  "햄버거.pdf",
+  "호두 파운드.pdf",
+  "호박고지 모듬떡.pdf",
+  "홍합조림.pdf",
+  "화이타.pdf",
+  "흑임자 떡 케이크.pdf",
+  "흰살생선매실소스.pdf"
+];
+
 export async function getRecipes(): Promise<Recipe[]> {
-  const recipesDirectory = path.join(process.cwd(), "public", "recipes");
+  const recipes = recipeList.map((filename, index) => ({
+    id: `recipe-${index + 1}`,
+    name: filename
+      .replace(".pdf", "")
+      .replace(/_/g, " ")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
+    filename: filename,
+    path: `https://raw.githubusercontent.com/sangeetparashar/family-cookbook/main/public/recipes/${encodeURIComponent(filename)}`,
+  }));
 
-  try {
-    const files = await fs.promises.readdir(recipesDirectory);
-    const pdfFiles = files.filter((file) => file.endsWith(".pdf"));
+  // Sort recipes alphabetically
+  recipes.sort((a, b) => a.name.localeCompare(b.name));
 
-    const recipes = pdfFiles.map((filename, index) => ({
-      id: `recipe-${index + 1}`,
-      name: filename
-        .replace(".pdf", "")
-        .replace(/_/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
-      filename: filename,
-      path: `/recipes/${filename}`,
-    }));
-
-    // Sort recipes alphabetically
-    recipes.sort((a, b) => a.name.localeCompare(b.name));
-
-    return recipes.map((recipe) => ({
-      ...recipe,
-      description: "", // Add missing required fields
-      category: getRecipeCategories[recipe.name] || ["Uncategorized"], // Use full category array
-    }));
-  } catch (error) {
-    console.error("Error reading recipes directory:", error);
-    return [];
-  }
+  return recipes.map((recipe) => ({
+    ...recipe,
+    description: "", // Add missing required fields
+    category: getRecipeCategories[recipe.name] || ["Uncategorized"], // Use full category array
+  }));
 }
 
 export const getRecipeCategories: { [key: string]: string[] } = {
