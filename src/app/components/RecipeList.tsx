@@ -27,9 +27,9 @@ export default function RecipeList({ recipes }: RecipeListProps) {
   };
 
   const filteredRecipes = useMemo(() => {
-    return recipes.filter((recipe) => {
+    // First, filter by search term across the entire list
+    const searchFiltered = recipes.filter((recipe) => {
       const title = recipe.name || recipe.title || "";
-      const matchesCategory = filter === "All" || recipe.category.includes(filter);
       const matchesSearch =
         searchTerm === "" ||
         title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,7 +37,13 @@ export default function RecipeList({ recipes }: RecipeListProps) {
           recipe.tags.some((tag) =>
             tag.toLowerCase().includes(searchTerm.toLowerCase())
           ));
-      return matchesCategory && matchesSearch;
+      return matchesSearch;
+    });
+
+    // Then, apply category filter to the search results
+    return searchFiltered.filter((recipe) => {
+      const matchesCategory = filter === "All" || recipe.category.includes(filter);
+      return matchesCategory;
     });
   }, [recipes, filter, searchTerm]);
 
@@ -61,6 +67,10 @@ export default function RecipeList({ recipes }: RecipeListProps) {
   // Handle search changes
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
+    // If there's a search term, automatically switch to "All" categories
+    if (value.trim() !== "") {
+      setFilter("All");
+    }
     resetPagination();
   };
 
