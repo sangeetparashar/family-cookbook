@@ -235,18 +235,18 @@ export default function RecipeAccordion({ recipe, isOpen, onToggle }: RecipeAcco
 
   return (
     <>
-      <div className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col ${isOpen ? 'flex-none' : 'flex-1 min-h-0 max-h-[7vh]'}`}>
+      <div className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col ${isOpen ? 'flex-none' : ''}`}>
         <button
           onClick={onToggle}
           aria-expanded={isOpen}
           aria-controls={`recipe-content-${recipe.id}`}
-          className={`w-full flex items-center justify-between p-4 md:p-5 text-left bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-colors duration-150 ${isOpen ? 'flex-shrink-0' : 'flex-1'}`}
+          className="w-full flex items-start justify-between p-4 md:p-5 text-left bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-colors duration-150"
         >
-          <div className="flex items-center">
-            <BookOpen size={20} className="mr-3 text-indigo-600 flex-shrink-0" />
-            <span className="font-semibold text-lg text-gray-800">{recipe.name}</span>
+          <div className="flex items-start min-w-0 flex-1">
+            <BookOpen size={20} className="mr-3 text-indigo-600 flex-shrink-0 mt-0.5" />
+            <span className="font-semibold text-lg text-gray-800 break-words leading-tight">{recipe.name}</span>
           </div>
-          {isOpen ? <ChevronUp size={24} className="text-indigo-600 flex-shrink-0" /> : <ChevronDown size={24} className="text-gray-500 flex-shrink-0" />}
+          {isOpen ? <ChevronUp size={24} className="text-indigo-600 flex-shrink-0 mt-0.5" /> : <ChevronDown size={24} className="text-gray-500 flex-shrink-0 mt-0.5" />}
         </button>
         
         {/* Content wrapper for smooth transition */}
